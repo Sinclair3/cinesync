@@ -1,0 +1,79 @@
+/*
+  CineSync Theme System
+  All UI colors are resolved through these custom properties.
+  Apply a theme by setting data-theme="<name>" on <html>.
+  Only midnight-dark enables dark-mode class for Tailwind dark: variants.
+*/
+
+/* ─── Sandy Warm (default) ─────────────────────────────────────────────── */
+:root,
+[data-theme="sandy-warm"] {
+  --color-bg:           #e8e0d4;
+  --color-card:         #f0ebe3;
+  --color-card-raised:  #f7f3ee;
+  --color-accent:       #c4623a;
+  --color-accent-hover: #a84f2e;
+  --color-accent-muted: #e8c4b2;
+  --color-text:         #2a2118;
+  --color-text-secondary: #6b5c4e;
+  --color-border:       #d4c9ba;
+  --color-overlay:      rgba(42, 33, 24, 0.4);
+  --color-shadow:       rgba(42, 33, 24, 0.10);
+  --color-shadow-strong: rgba(42, 33, 24, 0.20);
+
+  color-scheme: light;
+}
+
+/* ─── Midnight Dark ──────────────────────────────────────────────────────── */
+[data-theme="midnight-dark"] {
+  --color-bg:           #0e0e1a;
+  --color-card:         #181828;
+  --color-card-raised:  #22223a;
+  --color-accent:       #7c6af7;
+  --color-accent-hover: #6357d4;
+  --color-accent-muted: #2e2a55;
+  --color-text:         #eae8f5;
+  --color-text-secondary: #9d97c2;
+  --color-border:       #2c2c48;
+  --color-overlay:      rgba(0, 0, 0, 0.60);
+  --color-shadow:       rgba(0, 0, 0, 0.40);
+  --color-shadow-strong: rgba(0, 0, 0, 0.70);
+
+  color-scheme: dark;
+}
+
+/* ─── Forest Green ───────────────────────────────────────────────────────── */
+[data-theme="forest-green"] {
+  --color-bg:           #dbe8d8;
+  --color-card:         #e8f0e5;
+  --color-card-raised:  #f0f7ed;
+  --color-accent:       #3d7a42;
+  --color-accent-hover: #2e5e33;
+  --color-accent-muted: #b8d9bb;
+  --color-text:         #1a2e1c;
+  --color-text-secondary: #4d6b50;
+  --color-border:       #bdd4bc;
+  --color-overlay:      rgba(26, 46, 28, 0.40);
+  --color-shadow:       rgba(26, 46, 28, 0.10);
+  --color-shadow-strong: rgba(26, 46, 28, 0.20);
+
+  color-scheme: light;
+}
+
+/* ─── Rose Pink ──────────────────────────────────────────────────────────── */
+[data-theme="rose-pink"] {
+  --color-bg:           #f5e4e8;
+  --color-card:         #faf0f2;
+  --color-card-raised:  #fff7f8;
+  --color-accent:       #c4546a;
+  --color-accent-hover: #a83d55;
+  --color-accent-muted: #f0c0c8;
+  --color-text:         #2e1a1f;
+  --color-text-secondary: #8a5a62;
+  --color-border:       #e8c8cc;
+  --color-overlay:      rgba(46, 26, 31, 0.40);
+  --color-shadow:       rgba(46, 26, 31, 0.10);
+  --color-shadow-strong: rgba(46, 26, 31, 0.20);
+
+  color-scheme: light;
+}
