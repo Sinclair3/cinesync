@@ -2,18 +2,11 @@ export const APP_NAME = 'CineSync'
 
 export const ROUTES = {
   HOME:    '/',
-  AUTH:    '/auth',
-  PAIR:    '/pair',
-  WATCHLIST: '/watchlist',
-  MOVIE:   '/movie/:id',
-  SYNC:    '/sync',
-  PROFILE: '/profile',
+  LOGIN:   '/login',
+  ROOM:    '/room/:code',
 }
 
-// Firestore collection names
-export const COLLECTIONS = {
-  ROOMS:    'rooms',
-  MOVIES:   'movies',
-  SESSIONS: 'sessions',
-  USERS:    'users',
+// Realtime Database paths
+export const DB = {
+  room: (code) => `rooms/${code}`,
 }
