@@ -23,8 +23,9 @@ export default function RoomPage() {
   const navigate     = useNavigate()
   const { room, loading, updateRoom } = useRoom(code)
 
-  const videoRef     = useRef(null)
-  const isSyncingRef = useRef(false) // prevents echo when applying partner's sync
+  const videoRef        = useRef(null)
+  const isSyncingRef    = useRef(false) // prevents echo when applying partner's sync
+  const isPlayingMounted = useRef(false) // skip the initial isPlaying effect on mount
 
   const [movieUrlInput, setMovieUrlInput] = useState('')
   const [videoError,    setVideoError]    = useState(false)
@@ -45,7 +46,9 @@ export default function RoomPage() {
   }, [syncEngine.currentTime])
 
   // Apply remote isPlaying from Firebase to the video element
+  // Skip the initial render — only react to changes driven by the partner
   useEffect(() => {
+    if (!isPlayingMounted.current) { isPlayingMounted.current = true; return }
     const video = videoRef.current
     if (!video) return
     isSyncingRef.current = true
