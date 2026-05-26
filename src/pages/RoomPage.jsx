@@ -104,6 +104,11 @@ export default function RoomPage() {
     if (room?.movieUrl) setMovieUrlInput(room.movieUrl)
   }, [room?.movieUrl])
 
+  // Clear video error whenever the URL changes (affects both host and guest)
+  useEffect(() => {
+    setVideoError(false)
+  }, [room?.movieUrl])
+
   // ── Video event handlers ────────────────────────────────────────────────
   const handlePlay = () => {
     if (isSyncingRef.current) return
