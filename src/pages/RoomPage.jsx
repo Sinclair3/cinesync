@@ -3,6 +3,7 @@ import { useParams, useNavigate, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useRoom } from '../hooks/useRoom'
 import { useSync } from '../hooks/useSync'
+import { useSyncEngine } from '../hooks/useSyncEngine'
 import VideoTile from '../components/VideoTile'
 import Spinner from '../components/Spinner'
 
@@ -31,6 +32,17 @@ export default function RoomPage() {
   const [currentTime,   setCurrentTime]   = useState(0)
 
   const isHost = room?.hostId === user?.uid
+
+  const syncEngine = useSyncEngine({ roomCode: code, userId: user.uid, isHost })
+
+  // Apply remote currentTime from Firebase to the video element
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || syncEngine.currentTime === 0) return
+    isSyncingRef.current = true
+    video.currentTime = syncEngine.currentTime
+    setTimeout(() => { isSyncingRef.current = false }, 500)
+  }, [syncEngine.currentTime])
 
   // Apply sync messages that arrive from the partner via Daily
   const onSyncMessage = useCallback((data) => {
@@ -94,11 +106,14 @@ export default function RoomPage() {
     if (isSyncingRef.current) return
     const t = videoRef.current?.currentTime ?? 0
     sendSync({ type: 'SEEK', currentTime: t })
+    syncEngine.sendSeek(t)
     updateRoom({ currentTime: t })
   }
 
   const handleTimeUpdate = () => {
-    setCurrentTime(videoRef.current?.currentTime ?? 0)
+    const t = videoRef.current?.currentTime ?? 0
+    setCurrentTime(t)
+    syncEngine.updateLocalTime(t)
   }
 
   const handleSeekBar = (e) => {
