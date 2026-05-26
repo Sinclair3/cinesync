@@ -8,6 +8,7 @@ export function useSync({ dailyUrl, onSyncMessage, userName }) {
   const camOnRef   = useRef(true)
 
   const [joined,      setJoined]      = useState(false)
+  const [callError,   setCallError]   = useState(null)
   const [participants, setParticipants] = useState({})
   const [isMicOn,     setIsMicOn]     = useState(true)
   const [isCameraOn,  setIsCameraOn]  = useState(true)
@@ -29,9 +30,15 @@ export function useSync({ dailyUrl, onSyncMessage, userName }) {
       .on('participant-updated', refresh)
       .on('participant-left',    refresh)
       .on('app-message',         (e) => onSyncRef.current?.(e.data))
-      .on('error',               (e) => console.error('[Daily]', e))
+      .on('error', (e) => {
+        console.error('[Daily]', e)
+        setCallError(e.errorMsg ?? 'call-error')
+      })
 
-    call.join({ url: dailyUrl, userName }).catch(console.error)
+    call.join({ url: dailyUrl, userName }).catch((e) => {
+      console.error('[Daily] join failed', e)
+      setCallError('join-failed')
+    })
 
     return () => {
       call.leave().catch(() => {}).finally(() => call.destroy().catch(() => {}))
@@ -54,5 +61,5 @@ export function useSync({ dailyUrl, onSyncMessage, userName }) {
     setIsCameraOn(camOnRef.current)
   }, [])
 
-  return { joined, participants, sendSync, toggleMic, toggleCamera, isMicOn, isCameraOn }
+  return { joined, callError, participants, sendSync, toggleMic, toggleCamera, isMicOn, isCameraOn }
 }

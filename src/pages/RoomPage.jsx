@@ -29,6 +29,7 @@ export default function RoomPage() {
 
   const [movieUrlInput, setMovieUrlInput] = useState('')
   const [videoError,    setVideoError]    = useState(false)
+  const [loadError,     setLoadError]     = useState(null)
   const [duration,      setDuration]      = useState(0)
   const [currentTime,   setCurrentTime]   = useState(0)
 
@@ -91,7 +92,7 @@ export default function RoomPage() {
     setTimeout(() => { isSyncingRef.current = false }, 500)
   }, [updateRoom])
 
-  const { joined, participants, sendSync, toggleMic, toggleCamera, isMicOn, isCameraOn } =
+  const { joined, callError, participants, sendSync, toggleMic, toggleCamera, isMicOn, isCameraOn } =
     useSync({
       dailyUrl:      room?.dailyUrl,
       onSyncMessage,
@@ -139,12 +140,18 @@ export default function RoomPage() {
     if (videoRef.current) videoRef.current.currentTime = t
   }
 
-  const handleLoadMovie = () => {
+  const handleLoadMovie = async () => {
     const url = movieUrlInput.trim()
     if (!url) return
     setVideoError(false)
-    sendSync({ type: 'LOAD', movieUrl: url })
-    updateRoom({ movieUrl: url, currentTime: 0, isPlaying: false })
+    setLoadError(null)
+    try {
+      sendSync({ type: 'LOAD', movieUrl: url })
+      await updateRoom({ movieUrl: url, currentTime: 0, isPlaying: false })
+    } catch (err) {
+      console.error('[CineSync] updateRoom failed:', err)
+      setLoadError('Failed to sync URL — check Firebase Realtime Database is enabled.')
+    }
   }
 
   const copyCode = () => navigator.clipboard.writeText(code)
@@ -177,8 +184,16 @@ export default function RoomPage() {
             <span className="text-secondary text-xs">📋</span>
           </button>
 
-          {!joined && (
-            <span className="text-xs text-secondary animate-pulse">Connecting…</span>
+          {!joined && !callError && (
+            <span className="text-xs text-secondary animate-pulse">Connecting call…</span>
+          )}
+          {callError === 'account-missing-payment-method' && (
+            <span className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-full px-2.5 py-1">
+              ⚠ Video call needs payment method at daily.co
+            </span>
+          )}
+          {callError && callError !== 'account-missing-payment-method' && (
+            <span className="text-xs text-red-500">Video call unavailable</span>
           )}
 
           {joined && room.movieUrl && (
@@ -233,8 +248,12 @@ export default function RoomPage() {
             )}
 
             {videoError && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/80 text-white text-sm text-center p-4">
-                Could not load this video. Check that the URL points to a direct .mp4 or .webm file.
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/80 text-white text-sm text-center p-4">
+                <span>⚠ Could not load this video.</span>
+                <span className="text-white/60 text-xs">
+                  Try a direct .mp4 link, or open DevTools to check for errors.
+                  {isHost && ' Paste a new URL below and click Load to retry.'}
+                </span>
               </div>
             )}
           </div>
@@ -256,7 +275,7 @@ export default function RoomPage() {
           </div>
 
           {/* Playback controls */}
-          {room.movieUrl && (
+          {(room.movieUrl || movieUrlInput || isHost) && (
             <div className="flex items-center justify-center gap-4">
               <button
                 onClick={() => {
@@ -300,17 +319,24 @@ export default function RoomPage() {
 
           {/* Movie URL input — host only */}
           {isHost && (
-            <div className="flex gap-2">
-              <input
-                className="input flex-1 text-sm font-mono"
-                placeholder="Paste a direct video URL (.mp4, .webm, .mov…)"
-                value={movieUrlInput}
-                onChange={(e) => setMovieUrlInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleLoadMovie()}
-              />
-              <button onClick={handleLoadMovie} className="btn-accent whitespace-nowrap">
-                Load
-              </button>
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2">
+                <input
+                  className="input flex-1 text-sm font-mono"
+                  placeholder="Paste a direct video URL (.mp4, .webm, .mov…)"
+                  value={movieUrlInput}
+                  onChange={(e) => setMovieUrlInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleLoadMovie()}
+                />
+                <button onClick={handleLoadMovie} className="btn-accent whitespace-nowrap">
+                  Load
+                </button>
+              </div>
+              {loadError && (
+                <p className="text-xs text-red-500 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                  {loadError}
+                </p>
+              )}
             </div>
           )}
         </div>
