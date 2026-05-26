@@ -44,6 +44,19 @@ export default function RoomPage() {
     setTimeout(() => { isSyncingRef.current = false }, 500)
   }, [syncEngine.currentTime])
 
+  // Apply remote isPlaying from Firebase to the video element
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    isSyncingRef.current = true
+    if (syncEngine.isPlaying) {
+      video.play().catch(() => {})
+    } else {
+      video.pause()
+    }
+    setTimeout(() => { isSyncingRef.current = false }, 500)
+  }, [syncEngine.isPlaying])
+
   // Apply sync messages that arrive from the partner via Daily
   const onSyncMessage = useCallback((data) => {
     const video = videoRef.current
@@ -92,6 +105,7 @@ export default function RoomPage() {
     if (isSyncingRef.current) return
     const t = videoRef.current?.currentTime ?? 0
     sendSync({ type: 'PLAY', currentTime: t })
+    syncEngine.sendPlay(t)
     updateRoom({ isPlaying: true, currentTime: t })
   }
 
@@ -99,6 +113,7 @@ export default function RoomPage() {
     if (isSyncingRef.current) return
     const t = videoRef.current?.currentTime ?? 0
     sendSync({ type: 'PAUSE', currentTime: t })
+    syncEngine.sendPause(t)
     updateRoom({ isPlaying: false, currentTime: t })
   }
 

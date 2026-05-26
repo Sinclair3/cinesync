@@ -61,7 +61,7 @@ export function useSyncEngine({ roomCode, userId, isHost }) {
       // ── isPlaying ──────────────────────────────────────────────────────
       if (ip && ip.origin !== userId) {
         setIsPlaying(ip.value)
-        console.log(`[SYNC] ${ip.value ? 'play' : 'pause'} at ${fmt(ct?.value)}`)
+        console.log(`SYNC: ${ip.value ? 'play' : 'pause'} at ${fmt(ct?.value)}`)
       }
 
       // ── currentTime ────────────────────────────────────────────────────
@@ -74,13 +74,13 @@ export function useSyncEngine({ roomCode, userId, isHost }) {
           // Resync: host-initiated, apply immediately (no debounce)
           clearTimeout(seekTimerRef.current)
           setCurrentTime(remote)
-          console.log(`[SYNC] resync → ${fmt(remote)}`)
+          console.log(`SYNC: resync → ${fmt(remote)}`)
         } else {
           // Regular remote seek — debounce to avoid thrashing
           clearTimeout(seekTimerRef.current)
           seekTimerRef.current = setTimeout(() => {
             setCurrentTime(remote)
-            console.log(`[SYNC] seek to ${fmt(remote)}`)
+            console.log(`SYNC: seek to ${fmt(remote)}`)
           }, SEEK_DEBOUNCE_MS)
         }
       }
@@ -101,21 +101,21 @@ export function useSyncEngine({ roomCode, userId, isHost }) {
   // ── Send commands ─────────────────────────────────────────────────────
   const sendPlay = useCallback((time) => {
     localTimeRef.current = time
-    console.log(`[SYNC] play at ${fmt(time)}`)
+    console.log(`SYNC: play at ${fmt(time)}`)
     writeField('isPlaying',  true)
     writeField('currentTime', time)
   }, [writeField])
 
   const sendPause = useCallback((time) => {
     localTimeRef.current = time
-    console.log(`[SYNC] pause at ${fmt(time)}`)
+    console.log(`SYNC: pause at ${fmt(time)}`)
     writeField('isPlaying',  false)
     writeField('currentTime', time)
   }, [writeField])
 
   const sendSeek = useCallback((time) => {
     localTimeRef.current = time
-    console.log(`[SYNC] seek to ${fmt(time)}`)
+    console.log(`SYNC: seek to ${fmt(time)}`)
     writeField('currentTime', time)
   }, [writeField])
 
@@ -126,7 +126,7 @@ export function useSyncEngine({ roomCode, userId, isHost }) {
    */
   const sendResync = useCallback((time) => {
     if (!isHost) return
-    console.log(`[SYNC] resync at ${fmt(time)}`)
+    console.log(`SYNC: resync at ${fmt(time)}`)
     writeField('currentTime', time, { resync: true })
     writeField('isPlaying',   isPlaying)
   }, [isHost, isPlaying, writeField])
