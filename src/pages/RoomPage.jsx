@@ -256,6 +256,15 @@ export default function RoomPage() {
               >
                 10s ⏩
               </button>
+              {isHost && (
+                <button
+                  onClick={() => syncEngine.sendResync(videoRef.current?.currentTime ?? 0)}
+                  className="btn-ghost px-3 py-2 text-sm"
+                  title="Force partner to sync to your position"
+                >
+                  ↺ Re-sync
+                </button>
+              )}
             </div>
           )}
 
