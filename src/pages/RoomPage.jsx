@@ -162,6 +162,18 @@ export default function RoomPage() {
           {!joined && (
             <span className="text-xs text-secondary animate-pulse">Connecting…</span>
           )}
+
+          {joined && room.movieUrl && (
+            <span
+              className={`text-xs font-medium px-2.5 py-1 rounded-full border ${
+                syncEngine.syncStatus === 'synced'
+                  ? 'bg-green-50 text-green-700 border-green-200'
+                  : 'bg-amber-50 text-amber-700 border-amber-200'
+              }`}
+            >
+              {syncEngine.syncStatus === 'synced' ? '● synced' : '● drifting'}
+            </span>
+          )}
         </div>
 
         <button onClick={() => navigate('/')} className="btn-ghost text-sm px-3 py-1.5">
