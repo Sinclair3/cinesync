@@ -33,6 +33,18 @@
   }
 }
 
+@keyframes emoji-float {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(-240px) scale(1.5); }
+}
+
+.emoji-burst {
+  position: absolute;
+  font-size: 2rem;
+  pointer-events: none;
+  animation: emoji-float 1.8s ease-out forwards;
+}
+
 @layer components {
   .btn-accent {
     @apply bg-accent text-white font-semibold px-5 py-2.5 rounded-xl

@@ -5,6 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import LoginPage from './pages/LoginPage'
 import HomePage from './pages/HomePage'
 import RoomPage from './pages/RoomPage'
+import WatchRoomPage from './pages/WatchRoomPage'
 
 export default function App() {
   return (
@@ -26,6 +27,14 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <RoomPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/watch/:code"
+              element={
+                <ProtectedRoute>
+                  <WatchRoomPage />
                 </ProtectedRoute>
               }
             />
